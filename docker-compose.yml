@@ -1,0 +1,25 @@
+version: '1.0'
+
+services:
+  redis:
+    image: redis:latest
+    container_name: redis-visitor-count
+    networks:
+      visitor-count-network:
+
+  node:
+    image: node:16
+    container_name: visitor-count
+    ports:
+      - "3000:3000"
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: node index.js
+    depends_on:
+      - redis
+    networks:
+      visitor-count-network:
+
+networks:
+  visitor-count-network: {}
