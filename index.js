@@ -1,6 +1,8 @@
 import express from "express";
 import redis from "redis";
 
+const replicaName = process.env.APP_NAME;
+
 const redisClient = redis.createClient({
   url: "redis://redis-visitor-count:6379",
   port: 6379,
@@ -11,7 +13,7 @@ await redisClient.connect();
 const visitorCountKey = "visitor-count";
 
 const setVisitorCount = async () => {
-  console.log(">>>>>>>inside visitor count")
+  console.log(">>>>>>>inside visitor count");
 
   const currentVisitorCount = await redisClient.get(visitorCountKey);
   let updatedVisitorCount = 0;
@@ -32,7 +34,7 @@ const port = 3000;
 
 app.get("/", async (req, res) => {
   const visitorCount = await setVisitorCount();
-  const logToDisplay = `App running on docker, currentVisitorCount: ${visitorCount}`;
+  const logToDisplay = `App running on docker, request served by ${replicaName}, currentVisitorCount: ${visitorCount}`;
   res.send(logToDisplay);
 });
 

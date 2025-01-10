@@ -1,5 +1,6 @@
 version: '1.0'
 
+
 services:
   redis:
     image: redis:latest
@@ -7,11 +8,14 @@ services:
     networks:
       visitor-count-network:
 
-  node:
+
+  visitor-count-1:
     image: node:16
-    container_name: visitor-count
+    environment:
+      - APP_NAME=visitor-count-1
+    container_name: visitor-count-1
     ports:
-      - "3000:3000"
+      - "3001:3000"
     working_dir: /app
     volumes:
       - .:/app
@@ -20,6 +24,56 @@ services:
       - redis
     networks:
       visitor-count-network:
+
+
+  visitor-count-2:
+    image: node:16
+    environment:
+      - APP_NAME=visitor-count-2
+    container_name: visitor-count-2
+    ports:
+      - "3002:3000"
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: node index.js
+    depends_on:
+      - redis
+    networks:
+      visitor-count-network:
+
+
+  visitor-count-3:
+    image: node:16
+    environment:
+      - APP_NAME=visitor-count-3
+    container_name: visitor-count-3
+    ports:
+      - "3003:3000"
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: node index.js
+    depends_on:
+      - redis
+    networks:
+      visitor-count-network:
+
+
+  nginx: 
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - visitor-count-1
+      - visitor-count-2
+      - visitor-count-3
+    networks:
+      visitor-count-network:
+
 
 networks:
   visitor-count-network: {}
