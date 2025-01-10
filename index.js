@@ -32,7 +32,7 @@ const port = 3000;
 
 app.get("/", async (req, res) => {
   const visitorCount = await setVisitorCount();
-  const logToDisplay = `App running, redis client: ${visitorCount}`;
+  const logToDisplay = `App running on docker, currentVisitorCount: ${visitorCount}`;
   res.send(logToDisplay);
 });
 
